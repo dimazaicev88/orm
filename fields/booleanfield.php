@@ -9,6 +9,7 @@
 namespace Bitrix\Main\ORM\Fields;
 
 use Bitrix\Main\DB\SqlExpression;
+use Bitrix\Main\SystemException;
 
 /**
  * Entity field class for boolean data type
@@ -22,7 +23,7 @@ class BooleanField extends ScalarField
      * Value (false, true) equivalent map
      * @var array
      */
-    protected $values;
+    protected mixed $values;
 
     /**
      * BooleanField constructor.
@@ -30,7 +31,7 @@ class BooleanField extends ScalarField
      * @param       $name
      * @param array $parameters deprecated, use configure* and add* methods instead
      *
-     * @throws \Bitrix\Main\SystemException
+     * @throws SystemException
      */
     function __construct($name, $parameters = array())
     {
@@ -51,7 +52,7 @@ class BooleanField extends ScalarField
      *
      * @return $this
      */
-    public function configureStorageValues($falseValue, $trueValue)
+    public function configureStorageValues($falseValue, $trueValue): static
     {
         $this->values = [$falseValue, $trueValue];
         return $this;
@@ -65,7 +66,7 @@ class BooleanField extends ScalarField
      *
      * @return BooleanField
      */
-    public function configureValues($falseValue, $trueValue)
+    public function configureValues($falseValue, $trueValue): static
     {
         return $this->configureStorageValues($falseValue, $trueValue);
     }
@@ -75,7 +76,7 @@ class BooleanField extends ScalarField
      * @param boolean|integer|string $value
      * @return mixed
      */
-    public function normalizeValue($value)
+    public function normalizeValue(bool|int|string $value): mixed
     {
         if (
             (is_string($value) && ($value == '1' || $value == '0'))
@@ -103,7 +104,7 @@ class BooleanField extends ScalarField
      *
      * @return bool
      */
-    public function booleanizeValue($value)
+    public function booleanizeValue($value): bool
     {
         if (is_bool($value)) {
             return $value;
@@ -116,7 +117,7 @@ class BooleanField extends ScalarField
     /**
      * @return array|\Bitrix\Main\ORM\Fields\Validators\Validator[]|callback[]
      * @throws \Bitrix\Main\ArgumentTypeException
-     * @throws \Bitrix\Main\SystemException
+     * @throws SystemException
      */
     public function getValidators()
     {
@@ -134,7 +135,7 @@ class BooleanField extends ScalarField
         return $this->values;
     }
 
-    public function isValueEmpty($value)
+    public function isValueEmpty($value): bool
     {
         return (strval($value) === '' && $value !== false);
     }
@@ -162,7 +163,7 @@ class BooleanField extends ScalarField
      *
      * @return mixed
      */
-    public function convertValueFromDb($value)
+    public function convertValueFromDb($value): mixed
     {
         return $this->booleanizeValue($value);
     }
@@ -170,10 +171,10 @@ class BooleanField extends ScalarField
     /**
      * @param mixed $value
      *
-     * @return string
-     * @throws \Bitrix\Main\SystemException
+     * @return ?string
+     * @throws SystemException
      */
-    public function convertValueToDb($value)
+    public function convertValueToDb($value): ?string
     {
         if ($value instanceof SqlExpression) {
             return $value;

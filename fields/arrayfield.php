@@ -8,7 +8,9 @@
 
 namespace Bitrix\Main\ORM\Fields;
 
+use Bitrix\Main\ArgumentException;
 use Bitrix\Main\DB\SqlExpression;
+use Bitrix\Main\SystemException;
 use Bitrix\Main\Web\Json;
 
 /**
@@ -41,7 +43,7 @@ class ArrayField extends ScalarField
      *
      * @return $this
      */
-    public function configureSerializationJson()
+    public function configureSerializationJson(): static
     {
         $this->serializationType = 'json';
         $this->encodeFunction = [$this, 'encodeJson'];
@@ -55,7 +57,7 @@ class ArrayField extends ScalarField
      *
      * @return $this
      */
-    public function configureSerializationPhp()
+    public function configureSerializationPhp(): static
     {
         $this->serializationType = 'php';
         $this->encodeFunction = [$this, 'encodePhp'];
@@ -71,7 +73,7 @@ class ArrayField extends ScalarField
      *
      * @return $this
      */
-    public function configureSerializeCallback($callback)
+    public function configureSerializeCallback($callback): static
     {
         $this->encodeFunction = $callback;
         $this->serializationType = 'custom';
@@ -86,7 +88,7 @@ class ArrayField extends ScalarField
      *
      * @return $this
      */
-    public function configureUnserializeCallback($callback)
+    public function configureUnserializeCallback($callback): static
     {
         $this->decodeFunction = $callback;
         $this->serializationType = 'custom';
@@ -99,18 +101,18 @@ class ArrayField extends ScalarField
      *
      * @return string
      */
-    public function encode($value)
+    public function encode(array $value): string
     {
         $callback = $this->encodeFunction;
         return $callback($value);
     }
 
     /**
-     * @param string $value
+     * @param ?string $value
      *
      * @return array
      */
-    public function decode($value)
+    public function decode(?string $value): array
     {
         if ($value <> '') {
             $callback = $this->decodeFunction;
@@ -124,9 +126,9 @@ class ArrayField extends ScalarField
      * @param $value
      *
      * @return mixed
-     * @throws \Bitrix\Main\ArgumentException
+     * @throws ArgumentException
      */
-    public function encodeJson($value)
+    public function encodeJson($value): mixed
     {
         return Json::encode($value, 0);
     }
@@ -135,9 +137,9 @@ class ArrayField extends ScalarField
      * @param $value
      *
      * @return mixed
-     * @throws \Bitrix\Main\ArgumentException
+     * @throws ArgumentException
      */
-    public function decodeJson($value)
+    public function decodeJson($value): mixed
     {
         return Json::decode($value);
     }
@@ -147,7 +149,7 @@ class ArrayField extends ScalarField
      *
      * @return string
      */
-    public function encodePhp($value)
+    public function encodePhp($value): string
     {
         return serialize($value);
     }
@@ -157,7 +159,7 @@ class ArrayField extends ScalarField
      *
      * @return array
      */
-    public function decodePhp($value)
+    public function decodePhp($value): array
     {
         return unserialize($value);
     }
@@ -184,9 +186,9 @@ class ArrayField extends ScalarField
      * @param mixed $value
      *
      * @return mixed|string
-     * @throws \Bitrix\Main\SystemException
+     * @throws SystemException
      */
-    public function convertValueFromDb($value)
+    public function convertValueFromDb($value): mixed
     {
         return $this->getConnection()->getSqlHelper()->convertFromDbString($value);
     }
@@ -194,10 +196,10 @@ class ArrayField extends ScalarField
     /**
      * @param mixed $value
      *
-     * @return string
-     * @throws \Bitrix\Main\SystemException
+     * @return ?string
+     * @throws SystemException
      */
-    public function convertValueToDb($value)
+    public function convertValueToDb($value): ?string
     {
         if ($value instanceof SqlExpression) {
             return $value;
@@ -211,7 +213,7 @@ class ArrayField extends ScalarField
     /**
      * @return string
      */
-    public function getGetterTypeHint()
+    public function getGetterTypeHint(): string
     {
         return $this->getNullableTypeHint('array');
     }
@@ -219,7 +221,7 @@ class ArrayField extends ScalarField
     /**
      * @return string
      */
-    public function getSetterTypeHint()
+    public function getSetterTypeHint(): string
     {
         return $this->getNullableTypeHint('array');
     }
