@@ -15,10 +15,10 @@ use Bitrix\Main\ORM\Objectify\EntityObject;
 class Result extends \Bitrix\Main\Result
 {
     /** @var bool */
-    protected $wereErrorsChecked = false;
+    protected bool $wereErrorsChecked = false;
 
     /** @var EntityObject */
-    protected $object;
+    protected EntityObject $object;
 
     public function __construct()
     {
@@ -28,7 +28,7 @@ class Result extends \Bitrix\Main\Result
     /**
      * @return EntityObject
      */
-    public function getObject()
+    public function getObject(): EntityObject
     {
         return $this->object;
     }
@@ -36,7 +36,7 @@ class Result extends \Bitrix\Main\Result
     /**
      * @param EntityObject $object
      */
-    public function setObject($object)
+    public function setObject(EntityObject $object)
     {
         $this->object = $object;
     }
@@ -49,7 +49,7 @@ class Result extends \Bitrix\Main\Result
      *
      * @return bool
      */
-    public function isSuccess($internalCall = false)
+    public function isSuccess(bool $internalCall = false): bool
     {
         if (!$internalCall && !$this->wereErrorsChecked) {
             $this->wereErrorsChecked = true;
@@ -63,7 +63,7 @@ class Result extends \Bitrix\Main\Result
      *
      * @return EntityError[]|FieldError[]
      */
-    public function getErrors()
+    public function getErrors(): array
     {
         $this->wereErrorsChecked = true;
 
@@ -75,7 +75,7 @@ class Result extends \Bitrix\Main\Result
      *
      * @return array
      */
-    public function getErrorMessages()
+    public function getErrorMessages(): array
     {
         $this->wereErrorsChecked = true;
 

@@ -22,12 +22,12 @@ use Bitrix\Main\SystemException;
 class OneToMany extends Relation
 {
     /** @var string */
-    protected $referenceName;
+    protected string $referenceName;
 
     /** @var int */
-    protected $cascadeSavePolicy = CascadePolicy::FOLLOW;
+    protected int $cascadeSavePolicy = CascadePolicy::FOLLOW;
 
-    protected $cascadeDeletePolicy = CascadePolicy::SET_NULL; // follow | no_action | set_null
+    protected int $cascadeDeletePolicy = CascadePolicy::SET_NULL; // follow | no_action | set_null
 
     public function __construct($name, $referenceEntity, $referenceName)
     {
@@ -44,7 +44,7 @@ class OneToMany extends Relation
         parent::__construct($name);
     }
 
-    public function getTypeMask()
+    public function getTypeMask(): int
     {
         return FieldTypeMask::ONE_TO_MANY;
     }
@@ -57,7 +57,7 @@ class OneToMany extends Relation
     /**
      * @return string
      */
-    public function getReferenceName()
+    public function getReferenceName(): string
     {
         return $this->referenceName;
     }

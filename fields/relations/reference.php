@@ -26,13 +26,13 @@ use Bitrix\Main\SystemException;
 class Reference extends Relation
 {
     /** @var array|Filter */
-    protected $reference;
+    protected array|Filter $reference;
 
-    protected $joinType = Join::TYPE_LEFT;
+    protected ?string $joinType = Join::TYPE_LEFT;
 
-    protected $cascadeSavePolicy = CascadePolicy::NO_ACTION;
+    protected int $cascadeSavePolicy = CascadePolicy::NO_ACTION;
 
-    protected $cascadeDeletePolicy = CascadePolicy::NO_ACTION; // follow | no_action
+    protected int $cascadeDeletePolicy = CascadePolicy::NO_ACTION; // follow | no_action
 
     const ELEMENTAL_THIS = 1;
     const ELEMENTAL_REF = 2;
@@ -47,7 +47,7 @@ class Reference extends Relation
      * @throws ArgumentException
      * @throws SystemException
      */
-    public function __construct($name, $referenceEntity, $referenceFilter, $parameters = array())
+    public function __construct($name, $referenceEntity, Filter|array $referenceFilter, array $parameters = array())
     {
         parent::__construct($name);
 
@@ -74,7 +74,7 @@ class Reference extends Relation
         }
     }
 
-    public function getTypeMask()
+    public function getTypeMask(): int
     {
         return FieldTypeMask::REFERENCE;
     }

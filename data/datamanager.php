@@ -180,13 +180,13 @@ abstract class DataManager
      *
      * @return string
      */
-    final public static function getCollectionClassName()
+    final public static function getCollectionClassName(): string
     {
         $class = static::getCollectionClass();
         return substr($class, strrpos($class, '\\') + 1);
     }
 
-    protected static function getCollectionClassByDataClass($dataClass)
+    protected static function getCollectionClassByDataClass($dataClass): string
     {
         $objectClass = static::getEntityClass()::normalizeName($dataClass);
 
@@ -200,33 +200,33 @@ abstract class DataManager
     }
 
     /**
-     * @return EntityObject|string
+     * @return string
      */
-    public static function getObjectParentClass()
+    public static function getObjectParentClass(): string
     {
         return EntityObject::class;
     }
 
     /**
-     * @return Collection|string
+     * @return string
      */
-    public static function getCollectionParentClass()
+    public static function getCollectionParentClass(): string
     {
         return Collection::class;
     }
 
     /**
-     * @return Query|string
+     * @return string
      */
-    public static function getQueryClass()
+    public static function getQueryClass(): string
     {
         return Query::class;
     }
 
     /**
-     * @return Entity|string
+     * @return string
      */
-    public static function getEntityClass()
+    public static function getEntityClass(): string
     {
         return Entity::class;
     }
@@ -807,7 +807,7 @@ abstract class DataManager
      *
      * @throws \Exception
      */
-    public static function add(array $data)
+    public static function add(array $data): AddResult
     {
         global $USER_FIELD_MANAGER;
 

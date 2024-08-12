@@ -25,33 +25,33 @@ use Bitrix\Main\Text\StringHelper;
 class ManyToMany extends Relation
 {
     /** @var string */
-    protected $mediatorEntityName;
+    protected string $mediatorEntityName;
 
     /** @var Entity */
-    protected $mediatorEntity;
+    protected Entity $mediatorEntity;
 
     /** @var string Used when mediator is a virtual entity */
-    protected $mediatorTableName;
+    protected string $mediatorTableName;
 
     /** @var string[] Stores owner entity primary => mediator primary */
-    protected $localPrimaryNames;
+    protected array $localPrimaryNames;
 
     /** @var string Name of reference from mediator to owner entity */
-    protected $localReferenceName;
+    protected string $localReferenceName;
 
     /** @var string[] Stores target entity primary => mediator primary */
-    protected $remotePrimaryNames;
+    protected array $remotePrimaryNames;
 
     /** @var string Name of reference from mediator to target entity */
-    protected $remoteReferenceName;
+    protected string $remoteReferenceName;
 
     /** @var string */
-    protected $joinType = Join::TYPE_LEFT;
+    protected ?string $joinType = Join::TYPE_LEFT;
 
     /** @var int */
-    protected $cascadeSavePolicy = CascadePolicy::NO_ACTION;
+    protected int $cascadeSavePolicy = CascadePolicy::NO_ACTION;
 
-    protected $cascadeDeletePolicy = CascadePolicy::NO_ACTION; // follow_orphans | no_action
+    protected int $cascadeDeletePolicy = CascadePolicy::NO_ACTION; // follow_orphans | no_action
 
     /**
      * @param string $name
@@ -72,19 +72,19 @@ class ManyToMany extends Relation
         parent::__construct($name);
     }
 
-    public function getTypeMask()
+    public function getTypeMask(): int
     {
         return FieldTypeMask::MANY_TO_MANY;
     }
 
     /**
-     * Explicit mediator entity. By default will be generated automatically.
+     * Explicit mediator entity. By default, will be generated automatically.
      *
      * @param string|Entity $entity
      *
      * @return $this
      */
-    public function configureMediatorEntity($entity)
+    public function configureMediatorEntity(Entity|string $entity): static
     {
         if ($entity instanceof Entity) {
             $this->mediatorEntity = $entity;
@@ -104,7 +104,7 @@ class ManyToMany extends Relation
      *
      * @return $this
      */
-    public function configureMediatorTableName($name)
+    public function configureMediatorTableName($name): static
     {
         $this->mediatorTableName = $name;
 
@@ -118,7 +118,7 @@ class ManyToMany extends Relation
      *
      * @return $this
      */
-    public function configureTableName($name)
+    public function configureTableName($name): static
     {
         return $this->configureMediatorTableName($name);
     }
@@ -131,7 +131,7 @@ class ManyToMany extends Relation
      *
      * @return $this
      */
-    public function configureLocalPrimary($fieldName, $mediatorFieldName)
+    public function configureLocalPrimary($fieldName, $mediatorFieldName): static
     {
         $this->localPrimaryNames[$fieldName] = $mediatorFieldName;
 
@@ -145,7 +145,7 @@ class ManyToMany extends Relation
      *
      * @return $this
      */
-    public function configureLocalReference($name)
+    public function configureLocalReference($name): static
     {
         $this->localReferenceName = $name;
 
@@ -160,7 +160,7 @@ class ManyToMany extends Relation
      *
      * @return $this
      */
-    public function configureRemotePrimary($fieldName, $mediatorFieldName)
+    public function configureRemotePrimary($fieldName, $mediatorFieldName): static
     {
         $this->remotePrimaryNames[$fieldName] = $mediatorFieldName;
 
@@ -174,7 +174,7 @@ class ManyToMany extends Relation
      *
      * @return $this
      */
-    public function configureRemoteReference($name)
+    public function configureRemoteReference($name): static
     {
         $this->remoteReferenceName = $name;
 
@@ -186,7 +186,7 @@ class ManyToMany extends Relation
      * @throws ArgumentException
      * @throws SystemException
      */
-    public function getRemoteEntity()
+    public function getRemoteEntity(): Entity
     {
         return $this->getRefEntity();
     }
@@ -196,7 +196,7 @@ class ManyToMany extends Relation
      * @throws ArgumentException
      * @throws SystemException
      */
-    public function getMediatorEntity()
+    public function getMediatorEntity(): Entity
     {
         if ($this->mediatorEntity === null) {
             if (!empty($this->mediatorEntityName) && Entity::has($this->mediatorEntityName)) {
@@ -284,7 +284,7 @@ class ManyToMany extends Relation
     /**
      * @return string
      */
-    public function getLocalReferenceName()
+    public function getLocalReferenceName(): string
     {
         if (empty($this->localReferenceName)) {
             $this->localReferenceName = strtoupper(StringHelper::camel2snake($this->getEntity()->getName()));
@@ -310,7 +310,7 @@ class ManyToMany extends Relation
      * @throws ArgumentException
      * @throws SystemException
      */
-    public function getRemoteReferenceName()
+    public function getRemoteReferenceName(): string
     {
         if (empty($this->remoteReferenceName)) {
             $this->remoteReferenceName = strtoupper(StringHelper::camel2snake($this->getRefEntity()->getName()));

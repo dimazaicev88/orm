@@ -24,27 +24,27 @@ use Bitrix\Main\ORM\Query\Join;
  */
 abstract class Relation extends Field implements ITypeHintable
 {
-    /** @var string Name of target entity */
-    protected $refEntityName;
+    /** @var ?string Name of target entity */
+    protected ?string $refEntityName = null;
 
-    /** @var Entity Target entity */
-    protected $refEntity;
+    /** @var ?Entity Target entity */
+    protected ?Entity $refEntity = null;
 
-    /** @var string */
-    protected $joinType = null;
-
-    /** @var int */
-    protected $cascadeSavePolicy;
+    /** @var ?string */
+    protected ?string $joinType = null;
 
     /** @var int */
-    protected $cascadeDeletePolicy;
+    protected int $cascadeSavePolicy;
+
+    /** @var int */
+    protected int $cascadeDeletePolicy;
 
     /**
      * @param int $cascadeSavePolicy
      *
      * @return Relation
      */
-    public function configureCascadeSavePolicy($cascadeSavePolicy)
+    public function configureCascadeSavePolicy(int $cascadeSavePolicy): static
     {
         $this->cascadeSavePolicy = $cascadeSavePolicy;
 
@@ -56,7 +56,7 @@ abstract class Relation extends Field implements ITypeHintable
      *
      * @return Relation
      */
-    public function configureCascadeDeletePolicy($cascadeDeletePolicy)
+    public function configureCascadeDeletePolicy(int $cascadeDeletePolicy): static
     {
         $this->cascadeDeletePolicy = $cascadeDeletePolicy;
 
@@ -68,7 +68,7 @@ abstract class Relation extends Field implements ITypeHintable
      * @throws \Bitrix\Main\ArgumentException
      * @throws SystemException
      */
-    public function getRefEntity()
+    public function getRefEntity(): Entity
     {
         if ($this->refEntity === null) {
             // refEntityName could be an object or a data class
@@ -87,7 +87,7 @@ abstract class Relation extends Field implements ITypeHintable
     /**
      * @return string
      */
-    public function getRefEntityName()
+    public function getRefEntityName(): string
     {
         return $this->refEntityName;
     }
@@ -98,7 +98,7 @@ abstract class Relation extends Field implements ITypeHintable
      * @return $this
      * @throws ArgumentException
      */
-    public function configureJoinType($type)
+    public function configureJoinType($type): static
     {
         $type = strtoupper($type);
 
@@ -115,9 +115,9 @@ abstract class Relation extends Field implements ITypeHintable
     }
 
     /**
-     * @return string
+     * @return ?string
      */
-    public function getJoinType()
+    public function getJoinType(): ?string
     {
         return $this->joinType;
     }
@@ -133,7 +133,7 @@ abstract class Relation extends Field implements ITypeHintable
     /**
      * @return int
      */
-    public function getCascadeDeletePolicy()
+    public function getCascadeDeletePolicy(): int
     {
         return $this->cascadeDeletePolicy;
     }
@@ -143,7 +143,7 @@ abstract class Relation extends Field implements ITypeHintable
      * @throws ArgumentException
      * @throws SystemException
      */
-    public function getGetterTypeHint()
+    public function getGetterTypeHint(): EntityObject|string
     {
         return $this->getRefEntity()->getObjectClass();
     }
@@ -153,7 +153,7 @@ abstract class Relation extends Field implements ITypeHintable
      * @throws ArgumentException
      * @throws SystemException
      */
-    public function getSetterTypeHint()
+    public function getSetterTypeHint(): EntityObject|string
     {
         return $this->getRefEntity()->getObjectClass();
     }

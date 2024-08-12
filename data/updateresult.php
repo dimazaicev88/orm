@@ -13,17 +13,17 @@ use Bitrix\Main\DB\Connection;
 class UpdateResult extends Result
 {
     /** @var int */
-    protected $affectedRowsCount;
+    protected int $affectedRowsCount;
 
     /** @var array */
-    protected $primary;
+    protected array $primary;
 
     public function __construct()
     {
         parent::__construct();
     }
 
-    public function setAffectedRowsCount(Connection $connection)
+    public function setAffectedRowsCount(Connection $connection): void
     {
         $this->affectedRowsCount = $connection->getAffectedRowsCount();
     }
@@ -31,12 +31,12 @@ class UpdateResult extends Result
     /**
      * @return int
      */
-    public function getAffectedRowsCount()
+    public function getAffectedRowsCount(): int
     {
         return $this->affectedRowsCount;
     }
 
-    public function setPrimary($primary)
+    public function setPrimary($primary): void
     {
         $this->primary = $primary;
     }
@@ -44,7 +44,7 @@ class UpdateResult extends Result
     /**
      * @return array
      */
-    public function getPrimary()
+    public function getPrimary(): array
     {
         return $this->primary;
     }
@@ -53,7 +53,7 @@ class UpdateResult extends Result
      * Returns id of updated record
      * @return array|int|string
      */
-    public function getId()
+    public function getId(): array|int|string
     {
         if (count($this->primary) == 1) {
             return end($this->primary);
