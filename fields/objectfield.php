@@ -15,204 +15,194 @@ namespace Bitrix\Main\ORM\Fields;
  */
 class ObjectField extends ScalarField
 {
-	/** @var string[] */
-	protected $objectClasses = [];
+    /** @var string[] */
+    protected $objectClasses = [];
 
-	/** @var callable */
-	protected $encodeFunction;
+    /** @var callable */
+    protected $encodeFunction;
 
-	/** @var callable */
-	protected $decodeFunction;
+    /** @var callable */
+    protected $decodeFunction;
 
-	/**
-	 * ObjectField constructor.
-	 *
-	 * @param string $name
-	 * @param array $parameters
-	 *
-	 * @throws \Bitrix\Main\SystemException
-	 */
-	public function __construct($name, $parameters = [])
-	{
-		$this->addSaveDataModifier([$this, 'encode']);
-		$this->addFetchDataModifier([$this, 'decode']);
+    /**
+     * ObjectField constructor.
+     *
+     * @param string $name
+     * @param array $parameters
+     *
+     * @throws \Bitrix\Main\SystemException
+     */
+    public function __construct($name, $parameters = [])
+    {
+        $this->addSaveDataModifier([$this, 'encode']);
+        $this->addFetchDataModifier([$this, 'decode']);
 
-		parent::__construct($name, $parameters);
-	}
+        parent::__construct($name, $parameters);
+    }
 
-	/**
-	 * @return string[]
-	 */
-	public function getObjectClasses()
-	{
-		return $this->objectClasses;
-	}
+    /**
+     * @return string[]
+     */
+    public function getObjectClasses()
+    {
+        return $this->objectClasses;
+    }
 
-	/**
-	 * @param string|string[] $objectClass
-	 *
-	 * @return $this
-	 */
-	public function configureObjectClass($objectClass)
-	{
-		$classes = is_array($objectClass) ? $objectClass : [$objectClass];
+    /**
+     * @param string|string[] $objectClass
+     *
+     * @return $this
+     */
+    public function configureObjectClass($objectClass)
+    {
+        $classes = is_array($objectClass) ? $objectClass : [$objectClass];
 
-		foreach ($classes as $class)
-		{
-			if (!str_starts_with($class, '\\'))
-			{
-				$class = '\\'.$class;
-			}
+        foreach ($classes as $class) {
+            if (!str_starts_with($class, '\\')) {
+                $class = '\\' . $class;
+            }
 
-			$this->objectClasses[] = $class;
-		}
+            $this->objectClasses[] = $class;
+        }
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * Custom encode handler
-	 *
-	 * @param callable $callback
-	 *
-	 * @return $this
-	 */
-	public function configureSerializeCallback($callback)
-	{
-		$this->encodeFunction = $callback;
+    /**
+     * Custom encode handler
+     *
+     * @param callable $callback
+     *
+     * @return $this
+     */
+    public function configureSerializeCallback($callback)
+    {
+        $this->encodeFunction = $callback;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * Custom decode handler
-	 *
-	 * @param $callback
-	 *
-	 * @return $this
-	 */
-	public function configureUnserializeCallback($callback)
-	{
-		$this->decodeFunction = $callback;
+    /**
+     * Custom decode handler
+     *
+     * @param $callback
+     *
+     * @return $this
+     */
+    public function configureUnserializeCallback($callback)
+    {
+        $this->decodeFunction = $callback;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * @param mixed $value
-	 *
-	 * @return string
-	 */
-	public function encode($value)
-	{
-		$callback = $this->encodeFunction;
-		return $callback($value);
-	}
+    /**
+     * @param mixed $value
+     *
+     * @return string
+     */
+    public function encode($value)
+    {
+        $callback = $this->encodeFunction;
+        return $callback($value);
+    }
 
-	/**
-	 * @param string $value
-	 *
-	 * @return mixed
-	 */
-	public function decode($value)
-	{
-		$callback = $this->decodeFunction;
-		return $callback($value);
-	}
+    /**
+     * @param string $value
+     *
+     * @return mixed
+     */
+    public function decode($value)
+    {
+        $callback = $this->decodeFunction;
+        return $callback($value);
+    }
 
-	/**
-	 * @inheritDoc
-	 * @return mixed
-	 */
-	public function cast($value)
-	{
-		// try to check type
-		if (!empty($this->objectClasses))
-		{
-			$foundClass = false;
+    /**
+     * @inheritDoc
+     * @return mixed
+     */
+    public function cast($value)
+    {
+        // try to check type
+        if (!empty($this->objectClasses)) {
+            $foundClass = false;
 
-			foreach ($this->objectClasses as $objectType)
-			{
-				if ($value instanceof $objectType)
-				{
-					$foundClass = true;
-					break;
-				}
-			}
+            foreach ($this->objectClasses as $objectType) {
+                if ($value instanceof $objectType) {
+                    $foundClass = true;
+                    break;
+                }
+            }
 
-			if (!$foundClass)
-			{
-				trigger_error(sprintf(
-						'Invalid value type `%s` for `%s` field',
-						gettype($value) === 'object' ? get_class($value) : gettype($value),
-						$this->entity->getFullName().':'.$this->name
-					), E_USER_WARNING
-				);
-			}
-		}
+            if (!$foundClass) {
+                trigger_error(sprintf(
+                    'Invalid value type `%s` for `%s` field',
+                    gettype($value) === 'object' ? get_class($value) : gettype($value),
+                    $this->entity->getFullName() . ':' . $this->name
+                ), E_USER_WARNING
+                );
+            }
+        }
 
-		return $value;
-	}
+        return $value;
+    }
 
-	/**
-	 * @inheritDoc
-	 */
-	public function convertValueFromDb($value)
-	{
-		return $this->getConnection()->getSqlHelper()->convertFromDbString($value);
-	}
+    /**
+     * @inheritDoc
+     */
+    public function convertValueFromDb($value)
+    {
+        return $this->getConnection()->getSqlHelper()->convertFromDbString($value);
+    }
 
-	/**
-	 * @inheritDoc
-	 */
-	public function convertValueToDb($value)
-	{
-		return $value === null && $this->is_nullable
-			? $value
-			: $this->getConnection()->getSqlHelper()->convertToDbString($value);
-	}
+    /**
+     * @inheritDoc
+     */
+    public function convertValueToDb($value)
+    {
+        return $value === null && $this->is_nullable
+            ? $value
+            : $this->getConnection()->getSqlHelper()->convertToDbString($value);
+    }
 
-	/**
-	 * @inheritDoc
-	 */
-	public function getGetterTypeHint()
-	{
-		$type = 'mixed';
+    /**
+     * @inheritDoc
+     */
+    public function getGetterTypeHint()
+    {
+        $type = 'mixed';
 
-		if (!empty($this->objectClasses))
-		{
-			$types =  $this->objectClasses;
+        if (!empty($this->objectClasses)) {
+            $types = $this->objectClasses;
 
-			if ($this->is_nullable)
-			{
-				$types[] = 'null';
-			}
+            if ($this->is_nullable) {
+                $types[] = 'null';
+            }
 
-			$type =  join('|', $types);
-		}
+            $type = join('|', $types);
+        }
 
-		return $type;
-	}
+        return $type;
+    }
 
-	/**
-	 * @inheritDoc
-	 */
-	public function getSetterTypeHint()
-	{
-		$type = 'mixed';
+    /**
+     * @inheritDoc
+     */
+    public function getSetterTypeHint()
+    {
+        $type = 'mixed';
 
-		if (!empty($this->objectClasses))
-		{
-			$types =  $this->objectClasses;
+        if (!empty($this->objectClasses)) {
+            $types = $this->objectClasses;
 
-			if ($this->is_nullable)
-			{
-				$types[] = 'null';
-			}
+            if ($this->is_nullable) {
+                $types[] = 'null';
+            }
 
-			$type =  join('|', $types);
-		}
+            $type = join('|', $types);
+        }
 
-		return $type;
-	}
+        return $type;
+    }
 }

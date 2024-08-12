@@ -14,64 +14,60 @@ namespace Bitrix\Main\ORM\Fields;
  */
 class UserTypeUtsMultipleField extends TextField
 {
-	/** @var ScalarField */
-	protected $utmField;
+    /** @var ScalarField */
+    protected $utmField;
 
-	/**
-	 * @param Field $utmField
-	 * @return $this
-	 */
-	public function configureUtmField(Field $utmField)
-	{
-		$this->utmField = $utmField;
+    /**
+     * @param Field $utmField
+     * @return $this
+     */
+    public function configureUtmField(Field $utmField)
+    {
+        $this->utmField = $utmField;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * @return ScalarField
-	 */
-	public function getUtmField()
-	{
-		return $this->utmField;
-	}
+    /**
+     * @return ScalarField
+     */
+    public function getUtmField()
+    {
+        return $this->utmField;
+    }
 
-	/**
-	 * @inheritDoc
-	 */
-	public function getFetchDataModifiers()
-	{
-		$modifiers = parent::getFetchDataModifiers();
+    /**
+     * @inheritDoc
+     */
+    public function getFetchDataModifiers()
+    {
+        $modifiers = parent::getFetchDataModifiers();
 
-		if ($this->utmField->getFetchDataModifiers())
-		{
-			$modifiers[] = [$this, 'proxyFetchDataModification'];
-		}
+        if ($this->utmField->getFetchDataModifiers()) {
+            $modifiers[] = [$this, 'proxyFetchDataModification'];
+        }
 
-		return $modifiers;
-	}
+        return $modifiers;
+    }
 
-	/**
-	 * @param $values
-	 * @param $query
-	 * @param $data
-	 * @param $alias
-	 * @return []
-	 * @throws \Bitrix\Main\SystemException
-	 */
-	public function proxyFetchDataModification($values, $query, $data, $alias)
-	{
-		if ($values !== null)
-		{
-			foreach ($values as $k => $value)
-			{
-				foreach ($this->utmField->getFetchDataModifiers() as $modifier)
-				{
-					$values[$k] = call_user_func_array($modifier, array($values[$k], $query, $data, $alias));
-				}
-			}
-		}
+    /**
+     * @param $values
+     * @param $query
+     * @param $data
+     * @param $alias
+     * @return []
+     * @throws \Bitrix\Main\SystemException
+     */
+    public function proxyFetchDataModification($values, $query, $data, $alias)
+    {
+        if ($values !== null) {
+            foreach ($values as $k => $value) {
+                foreach ($this->utmField->getFetchDataModifiers() as $modifier) {
+                    $values[$k] = call_user_func_array($modifier, array($values[$k], $query, $data, $alias));
+                }
+            }
+        }
 
-		return $values;
-	}
+        return $values;
+    }
 }
